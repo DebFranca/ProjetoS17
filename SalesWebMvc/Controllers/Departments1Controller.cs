@@ -11,14 +11,14 @@ namespace SalesWebMvc.Controllers
 {
     public class Departments1Controller : Controller
     {
-        private readonly SalesWebMvcContext _context;
+        private readonly SalesWebMvcContext _context; //Criou uma dependênica _context
 
-        public Departments1Controller(SalesWebMvcContext context)
+        public Departments1Controller(SalesWebMvcContext context) //fez o construtur para injeção de dependência
         {
             _context = context;
         }
-
-        // GET: Departments1
+        //Criou os métodos:
+        // GET: Departments1  
         public async Task<IActionResult> Index()
         {
             return View(await _context.Department.ToListAsync());
