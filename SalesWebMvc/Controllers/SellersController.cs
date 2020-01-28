@@ -64,7 +64,6 @@ namespace SalesWebMvc.Controllers
             }
 
             return View(obj); // se tudo deu certo, vou mandar meu método retornar uma View passando o obj como argumento
-
         }
 
         [HttpPost]
@@ -76,6 +75,20 @@ namespace SalesWebMvc.Controllers
 
         }
 
+        public IActionResult Details(int? id)//recebe um int opcional "?" indica opcional
+        {
+            if (id == null) //1o testo se o Id foi Null, se for sig que foi feito de forma indevida
+            {
+                return NotFound(); //instancia com um resposta básica
+            }
+            var obj = _sellerService.FindById(id.Value); //pegar o objeto que estou mandando deletar, devo por .Value porque é um Numble, obj opcional
+            if (obj == null) //Esse Id que passei pode ser um Id que não existe, se não existir, meu método FindById retorna Null
+            {
+                return NotFound();
+            }
+
+            return View(obj); // se tudo deu certo, vou mandar meu método retornar uma View passando o obj como argumento
+        }
 
 
     }
