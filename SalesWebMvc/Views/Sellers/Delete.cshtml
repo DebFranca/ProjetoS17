@@ -1,0 +1,54 @@
+﻿@model SalesWebMvc.Models.Seller
+<!--tipo do model que recebe-->
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Tem certeza que deseja deletar ?</h3> <!--Criando a tela de confirmação-->
+
+<div>
+    <!--Div para mostrar os dados do Objeto-->
+    <h4>Seller</h4> <!--Subtitulo-->
+    <hr /> <!--Linha do html-->
+    <dl class="dl-horizontal">
+        <!--elemento dl lista os campos do objeto-->
+        <dt><!--mostra o nome do campo-->
+            @Html.DisplayNameFor(model => model.Name) 
+        </dt>
+        <dd><!--Mostra o valor do Campo-->
+            @Html.DisplayFor(model => model.Name)
+
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BirthDate)
+
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.BaseSalary)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BaseSalary)
+        </dd>
+    </dl>
+    <!-- Depois de mostrar os dados, vou criar um form para ter um botao de cancelar ou de confirmar -->
+    <form asp-action="Delete">
+        <!--asp-action é pra chamar a ação Delete-->
+        <input type="hidden" asp-for="Id" /> <!--o Que vamos enviar nesse formulário? O cód do Seller, o Hiden é um campo oculto-->
+        <input type="submit" value="Delete" class="btn btn-danger"  /> <!--Criando o Botao-->
+        <a asp-action="Index">Back to List</a> <!--Adicionando um link para o usuário poder voltar sem deletar-->
+    </form>
+
+</div>
