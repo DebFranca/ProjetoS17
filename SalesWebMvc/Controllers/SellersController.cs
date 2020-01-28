@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SalesWebMvc.Models;
+using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
 
 namespace SalesWebMvc.Controllers
@@ -12,11 +13,13 @@ namespace SalesWebMvc.Controllers
     {
         //2. o Index vai ter que chamar nossa operação FindAll do SellerService, 1o fazer a dependência
         private readonly SellerService _sellerService;
+        private readonly DepartmentService _departmentService;//vou acrescentar ele no meu construtor para ser injetado no meu objeto
 
         //3.Para injetar a dependência fazer o construtor
-        public SellersController (SellerService sellerService)
+        public SellersController (SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
+            _departmentService = departmentService;
         }
 
         //1.Por padrão criou Index, para testar essa ação, vamos criar uma pagina de Index,a view, vá a pasta View para criar.
@@ -33,7 +36,9 @@ namespace SalesWebMvc.Controllers
         //IActionResult é o tipo de retorno de TODAS as ações
         public IActionResult Create()
         {
-            return View();//simplesmente vai retornar a View Create
+            var departments = _departmentService.FindAll();
+            var viewModel = new SellerFormViewModel { Departments = departments }; //Vamos iniciar com esta lista de departamentos
+            return View(viewModel);//A tela de cadastro qdo for acionada pela 1a vez, vai receber o objeto "viewModel" com deptos populados
         }
 
         [HttpPost]//como essa ação "Create(Seller seller)" é um POST preciso indicar fazendo isso "[HttpPost]"
