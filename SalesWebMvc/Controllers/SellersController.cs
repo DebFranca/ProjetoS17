@@ -36,13 +36,16 @@ namespace SalesWebMvc.Controllers
             return View();//simplesmente vai retornar a View Create
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Seller seller)
+        [HttpPost]//como essa ação "Create(Seller seller)" é um POST preciso indicar fazendo isso "[HttpPost]"
+        [ValidateAntiForgeryToken] //Isso serve para proteger contra ataques CSRF, ataques maliciosos.
+        public IActionResult Create(Seller seller)//no parametro recebe e instanicia um objeto vendedor que veio da requisição,
         {
-            _sellerService.Insert(seller);
-            return RedirectToAction(nameof(Index));
+            _sellerService.Insert(seller); //Ação para inserir no banco da dados
+            return RedirectToAction(nameof(Index)); //após inserir vou redirecionar a ação para o método Index, para voltar a tela principal.
+            //nameof colocamos porque se um dia eu mudar o name "index" por outra palavra não vou precisar mudar aqui embaixo tb. 
 
         }
+
+
     }
 }
