@@ -1,0 +1,46 @@
+﻿@model SalesWebMvc.Models.ViewModels.SellerFormViewModel;
+<!--model SalesWebMvc.Models.ViewModels.SellerFormViewModel: para reconhecer os atributos Name,Email...-->
+@{
+    ViewData["Title"] = "Edit";
+}
+<h2>@ViewData["Title"]</h2>
+<h4>Seller</h4>
+<hr /> <!--Pular Linha-->
+<div class="row">
+    <!--row vai garantir a essa div vai OCUPAR A LARGURA DA TELA-->
+    <div class="col-md-4">
+        <!--4 ocupa 1/3 da tela, o brotstrap divide a tela em 12 partes, logo 4 é 1/3 da tela-->
+        <form asp-action="Edit">
+            <!--qdo eu enviar o form = formulário o asp-action vai chamar a ação create do método POST-->
+            <input type="hidden" asp-for="Seller.Id"/> <!--Campo Oculto-->
+            <div class="form-group">
+                <!--form-group: função do Botstrap para deixar mais bonito ajusta as margens-->
+                <label asp-for="Seller.Name" class="control-label"></label> <!--label é rotulo-->
+                <input asp-for="Seller.Name" class="form-control" /> <!--form-control estiliza o campo onde inserimos dados-->
+            </div>
+            <div class="form-group">
+                <label asp-for="Seller.Email" class="control-label"></label>
+                <input asp-for="Seller.Email" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Seller.BirthDate" class="control-label"></label>
+                <input asp-for="Seller.BirthDate" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Seller.BaseSalary" class="control-label"></label>
+                <input asp-for="Seller.BaseSalary" class="form-control" />
+            </div>
+            <div class="form-group">
+                <!--Vai montar para nós a caixa de seleção, o componente select é caixa de seleção do html -->
+                <label asp-for="Seller.DepartmentId" class="control-label"></label>
+                <select asp-for="Seller.DepartmentId" asp-items="@(new SelectList(Model.Departments,"Id","Name"))" class="form-control"></select>
+            </div>
+            <!--asp-items vai construir os itens da caixa de seleção com base na coleção que vc informar, SelectList tem 3 argumentos
+            (Model.Departments:qual a fonte de dados da coleção / Id: qual atributo do objeto que vai ser a chave / Name: qual atributos vai aparecer na cx-->
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" /> <!--Botao para enivar "submit" o formulário-->
+            </div>
+        </form>
+    </div>
+</div>
+
