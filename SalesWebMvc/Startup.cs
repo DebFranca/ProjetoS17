@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +58,17 @@ namespace SalesWebMvc
             /*se você adicionar um parâmetro no método configure "como o SeedingService" e essa classe SeedingService 
             estiver registrada no sistema de injeção de dependência da aplicação, que é justamente services.AddScoped<SeedingService>();
             automaticamente vai ser resolvido uma instancia desse objeto/parametro SeedingService  */
+
+            var enUS = new CultureInfo("en-US");//Definindo a localização como sendo dos EUA
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                //configurando a localização padrão
+                DefaultRequestCulture = new RequestCulture(enUS),
+                SupportedCultures = new List<CultureInfo> { enUS },
+                SupportedUICultures = new List<CultureInfo> { enUS }
+            };
+
+            app.UseRequestLocalization(localizationOptions);
 
             if (env.IsDevelopment()) //Se eu estiver no perfil de desenvolvimento, que é nosso caso, vou rodar meu SeedingService
             {
