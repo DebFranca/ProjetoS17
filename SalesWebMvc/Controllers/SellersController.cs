@@ -39,7 +39,7 @@ namespace SalesWebMvc.Controllers
 
         //IActionResult é o tipo de retorno de TODAS as ações
         public IActionResult Create()
-        {
+        {  
             var departments = _departmentService.FindAll();
             var viewModel = new SellerFormViewModel { Departments = departments }; //Vamos iniciar com esta lista de departamentos
             return View(viewModel);//A tela de cadastro qdo for acionada pela 1a vez, vai receber o objeto "viewModel" com deptos populados
@@ -49,6 +49,14 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken] //Isso serve para proteger contra ataques CSRF, ataques maliciosos.
         public IActionResult Create(Seller seller)//no parametro recebe e instanicia um objeto vendedor que veio da requisição,
         {
+            //ModelState.IsValid serve para testar se o Modelo foi validado, se ele não foi validado, então retorno meu obj viewModel
+            if (!ModelState.IsValid)
+            {
+                var departments = _departmentService.FindAll();
+                var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
+                return View(viewModel); // então isso vai ficar acontecendo até o usuário preencher corretamente o formulário
+            }
+
             _sellerService.Insert(seller); //Ação para inserir no banco da dados
             return RedirectToAction(nameof(Index)); //após inserir vou redirecionar a ação para o método Index, para voltar a tela principal.
             //nameof colocamos porque se um dia eu mudar o name "index" por outra palavra não vou precisar mudar aqui embaixo tb. 
@@ -96,6 +104,7 @@ namespace SalesWebMvc.Controllers
 
         public IActionResult Edit(int? id)
         {
+
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
@@ -116,6 +125,14 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int Id, Seller seller)
         {
+            //ModelState.IsValid serve para testar se o Modelo foi validado, se ele não foi validado, então retorno meu obj viewModel
+            if (!ModelState.IsValid)
+            {
+                var departments = _departmentService.FindAll();
+                var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
+                return View(viewModel); // então isso vai ficar acontecendo até o usuário preencher corretamente o formulário
+            }
+
             if (Id != seller.Id)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not mismatch" });
