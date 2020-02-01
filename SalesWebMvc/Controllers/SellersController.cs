@@ -8,6 +8,7 @@ using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
 using SalesWebMvc.Services.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace SalesWebMvc.Controllers
 {
@@ -27,10 +28,10 @@ namespace SalesWebMvc.Controllers
         }
 
         //1.Por padrão criou Index, para testar essa ação, vamos criar uma pagina de Index,a view, vá a pasta View para criar.
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //4.Agora para chamar e passar como argumento na View, para gerar IActionResult contendo a lista
-            var list = _sellerService.FindAll();
+            var list = await _sellerService.FindAllAsync();
             return View(list);
         }
 
@@ -38,38 +39,38 @@ namespace SalesWebMvc.Controllers
         //pegou o dado na "list" e vai encaminhar esses dados para a "View" essa é a dinamica MVC acontecendo. 
 
         //IActionResult é o tipo de retorno de TODAS as ações
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {  
-            var departments = _departmentService.FindAll();
+            var departments = await _departmentService.FindAllAsync();
             var viewModel = new SellerFormViewModel { Departments = departments }; //Vamos iniciar com esta lista de departamentos
             return View(viewModel);//A tela de cadastro qdo for acionada pela 1a vez, vai receber o objeto "viewModel" com deptos populados
         }
 
         [HttpPost]//como essa ação "Create(Seller seller)" é um POST preciso indicar fazendo isso "[HttpPost]"
         [ValidateAntiForgeryToken] //Isso serve para proteger contra ataques CSRF, ataques maliciosos.
-        public IActionResult Create(Seller seller)//no parametro recebe e instanicia um objeto vendedor que veio da requisição,
+        public async Task<IActionResult> Create(Seller seller)//no parametro recebe e instanicia um objeto vendedor que veio da requisição,
         {
             //ModelState.IsValid serve para testar se o Modelo foi validado, se ele não foi validado, então retorno meu obj viewModel
             if (!ModelState.IsValid)
             {
-                var departments = _departmentService.FindAll();
+                var departments = await _departmentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
                 return View(viewModel); // então isso vai ficar acontecendo até o usuário preencher corretamente o formulário
             }
 
-            _sellerService.Insert(seller); //Ação para inserir no banco da dados
+            await _sellerService.InsertAsync(seller); //Ação para inserir no banco da dados
             return RedirectToAction(nameof(Index)); //após inserir vou redirecionar a ação para o método Index, para voltar a tela principal.
             //nameof colocamos porque se um dia eu mudar o name "index" por outra palavra não vou precisar mudar aqui embaixo tb. 
 
         }
 
-        public IActionResult Delete(int? id)//recebe um int opcional "?" indica opcional
+        public async Task<IActionResult> Delete(int? id)//recebe um int opcional "?" indica opcional
         {
             if (id == null) //1o testo se o Id foi Null, se for sig que foi feito de forma indevida
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
-            var obj = _sellerService.FindById(id.Value); //pegar o objeto que estou mandando deletar, devo por .Value porque é um Numble, obj opcional
+            var obj = await _sellerService.FindByIdAsync(id.Value); //pegar o objeto que estou mandando deletar, devo por .Value porque é um Numble, obj opcional
             if (obj == null) //Esse Id que passei pode ser um Id que não existe, se não existir, meu método FindById retorna Null
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
@@ -80,20 +81,20 @@ namespace SalesWebMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
-            _sellerService.Remove(Id);
+            await _sellerService.RemoveAsync(Id);
             return RedirectToAction(nameof(Index));
 
         }
 
-        public IActionResult Details(int? id)//recebe um int opcional "?" indica opcional
+        public async Task<IActionResult> Details(int? id)//recebe um int opcional "?" indica opcional
         {
             if (id == null) //1o testo se o Id foi Null, se for sig que foi feito de forma indevida
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
-            var obj = _sellerService.FindById(id.Value); //pegar o objeto que estou mandando deletar, devo por .Value porque é um Numble, obj opcional
+            var obj = await _sellerService.FindByIdAsync(id.Value); //pegar o objeto que estou mandando deletar, devo por .Value porque é um Numble, obj opcional
             if (obj == null) //Esse Id que passei, se não existir, meu método FindById retorna Null
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
@@ -102,20 +103,20 @@ namespace SalesWebMvc.Controllers
             return View(obj); // se tudo deu certo, vou mandar meu método retornar uma View passando o obj como argumento
         }
 
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
 
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
-            var obj = _sellerService.FindById(id.Value);
+            var obj = await _sellerService.FindByIdAsync(id.Value);
             if (obj == null) //Se for igual a null sig que meu obj não existia no meu banco de dados
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
             //Para Abrir a tela de edição e caso de existênicia do objeto
-            List<Department> departments = _departmentService.FindAll();
+            List<Department> departments = await _departmentService.FindAllAsync();
             SellerFormViewModel viewModel = new SellerFormViewModel { Seller = obj, Departments = departments };
             return View(viewModel);
 
@@ -123,12 +124,12 @@ namespace SalesWebMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int Id, Seller seller)
+        public async Task<IActionResult> Edit(int Id, Seller seller)
         {
             //ModelState.IsValid serve para testar se o Modelo foi validado, se ele não foi validado, então retorno meu obj viewModel
             if (!ModelState.IsValid)
             {
-                var departments = _departmentService.FindAll();
+                var departments = await _departmentService.FindAllAsync();
                 var viewModel = new SellerFormViewModel { Seller = seller, Departments = departments };
                 return View(viewModel); // então isso vai ficar acontecendo até o usuário preencher corretamente o formulário
             }
@@ -139,7 +140,7 @@ namespace SalesWebMvc.Controllers
             }
             try
             {
-                _sellerService.Update(seller);
+                await _sellerService.UpdateAsync(seller);
                 return RedirectToAction(nameof(Index));
             }
             catch (ApplicationException e)
