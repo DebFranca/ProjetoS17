@@ -35,9 +35,18 @@ namespace SalesWebMvc.Services
 
         public async Task RemoveAsync(int id)
         {
-            var obj = await _context.Seller.FindAsync(id);//Pego o Objeto chamando _context.Seller.Find
-            _context.Seller.Remove(obj);//com o objeto na mão, coloco ele dentro do Remove, mas isso dentro do DbSet
-           await _context.SaveChangesAsync();//Agora tenho que confirmar essa alteração dentro do Entity Framework usando o SaveChanges
+            try
+            {
+                var obj = await _context.Seller.FindAsync(id);//Pego o Objeto chamando _context.Seller.Find
+                _context.Seller.Remove(obj);//com o objeto na mão, coloco ele dentro do Remove, mas isso dentro do DbSet
+                await _context.SaveChangesAsync();//Agora tenho que confirmar essa alteração dentro do Entity Framework usando o SaveChanges
+            }
+            catch (DbUpdateException e)
+            {
+                throw new IntegrityException(e.Message);
+                //Personalizada: throw new IntegrityException("Não posso deletar o vendedor há possui vendas);
+            }
+
         }
 
         public async Task UpdateAsync(Seller obj)
