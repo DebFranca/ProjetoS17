@@ -93,8 +93,6 @@ namespace SalesWebMvc.Controllers
                 return RedirectToAction(nameof(Error), new { message = e.Message});
                // ou você pode personalizar a mensagem indo no SellerService
             }
-           
-
         }
 
         public async Task<IActionResult> Details(int? id)//recebe um int opcional "?" indica opcional
