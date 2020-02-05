@@ -1,7 +1,85 @@
-﻿
+﻿@model IEnumerable<IGrouping<Department, SalesRecord>>
+<!--Uma lista de agrupamentos, baseado no departamento e para cada departamento, vou ter vários SalesRecord, então a qtd na lista é
+    a mesma qtd de departamentos, então teremos um foreach para percorrer departamento e outro foreach percorrendo SalesRecord -->
+
+<!--Estou declarando duas variaveis na ling C#, vou pegar minDate enviado pelo controlador e fazer um casting dele para String e criar
+    uma data a partir dele-->
 @{
-    ViewData["Title"] = "GroupingSearch";
+    ViewData["Title"] = "Grouping Search";
+    DateTime minDate = DateTime.Parse(ViewData["minDate"] as string);
+    DateTime maxDate = DateTime.Parse(ViewData["maxDate"] as string);
 }
 
-    <h2>ViewData["Title"]</h2>
+<h2>@ViewData["Title"]</h2>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <div class="form-group">
+                    <label for="minDate">Min Date</label>
+                    <input type="date" class="form-control" name="minDate" value=@ViewData["minDate"]>
+                </div>
+                <div class="form-group">
+                    <label for="maxDate">Max Date</label>
+                    <input type="date" class="form-control" name="maxDate" value=@ViewData["maxDate"]>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+</nav>
+
+
+<!--Como meus dados vão estar agrupados em departamentos, terei que fazer dois foreach, um para departmentGroup -->
+@foreach (var departmentGroup in Model)
+{
+    <div class="panel panel-primary"><!--Para cada departamento vou criar um painel, vou ter uma tabela de vendas -->
+        <div class="panel-heading">
+            <!--No começo de cada tabela, vou mostrar um sumário-->
+            <h3 class="panel-title">Department @departmentGroup.Key.Name, 
+            Total sales = @departmentGroup.Key.TotalSales(minDate, maxDate).ToString("F2")</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr class="success">
+                        <th>
+                            Date
+                        </th>
+                        <th>
+                            Amount
+                        </th>
+                        <th>
+                            Seller
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in departmentGroup)
+                    {
+                        <!--Para preenchar cada linha dessa tabela, vou fazer um foreach nas vendas daquele departamento-->
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Seller.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
 
